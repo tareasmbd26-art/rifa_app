@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>RifasPro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f0f4f8;--card:#fff;--bg2:#eef2f7;
+  --text:#0f172a;--muted:#64748b;--light:#94a3b8;
+  --border:#e2e8f0;--border2:#cbd5e1;
+  --green:#16a34a;--green-bg:#dcfce7;--green-b:#86efac;
+  --blue:#1d4ed8;--blue-bg:#dbeafe;--blue-b:#93c5fd;
+  --yellow:#b45309;--yellow-bg:#fef9c3;--yellow-b:#fde047;
+  --gray:#475569;--gray-bg:#f1f5f9;--gray-b:#cbd5e1;
+  --primary:#0ea5e9;--pd:#0284c7;--pl:#e0f2fe;
+  --danger:#dc2626;--dbg:#fee2e2;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow-x:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+button{cursor:pointer;font-family:var(--font);border:none;outline:none}
+input,select,textarea{font-family:var(--font);outline:none;-webkit-appearance:none;appearance:none}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.55rem 1rem;border-radius:8px;font-size:.85rem;font-weight:600;white-space:nowrap;border:1.5px solid transparent;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--pd)}.btn-primary:hover{background:var(--pd)}
+.btn-secondary{background:#fff;color:var(--text);border-color:var(--border2)}.btn-secondary:hover{background:var(--bg2)}
+.btn-danger{background:var(--dbg);color:var(--danger);border-color:#fca5a5}.btn-danger:hover{background:#fecaca}
+.btn-green{background:var(--green-bg);color:var(--green);border-color:var(--green-b)}.btn-green:hover{background:#bbf7d0}
+.btn-sm{padding:.35rem .75rem;font-size:.78rem;border-radius:6px}
+.btn-xs{padding:.25rem .55rem;font-size:.72rem;border-radius:5px}
+
+/* CARDS */
+.card{background:var(--card);border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.07),0 1px 3px rgba(0,0,0,.04);border:1px solid var(--border)}
+
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:.3rem}
+.flabel{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.fc{padding:.6rem .8rem;border:1.5px solid var(--border);border-radius:7px;font-size:.88rem;background:#fff;color:var(--text);width:100%;transition:border-color .15s,box-shadow .15s}
+.fc:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(14,165,233,.1)}
+.fhint{font-size:.7rem;color:var(--light);margin-top:.2rem}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:.25rem;padding:.18rem .5rem;border-radius:999px;font-size:.7rem;font-weight:700;border:1.5px solid}
+.b-av{background:var(--green-bg);color:var(--green);border-color:var(--green-b)}
+.b-pa{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-b)}
+.b-pe{background:var(--yellow-bg);color:var(--yellow);border-color:var(--yellow-b)}
+.b-re{background:var(--gray-bg);color:var(--gray);border-color:var(--gray-b)}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:230px;min-width:230px;background:#0f172a;color:#fff;display:flex;flex-direction:column;height:100vh;position:sticky;top:0;transition:transform .2s}
+.sb-head{padding:1rem 1rem .875rem;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:.5rem}
+.sb-logo{font-weight:800;font-size:.95rem}
+.sb-sub{font-size:.6rem;opacity:.35;margin-top:.1rem}
+.sb-body{padding:.625rem;flex:1;overflow-y:auto}
+.sb-label{font-size:.58rem;font-weight:700;opacity:.3;text-transform:uppercase;letter-spacing:.1em;padding:.5rem .5rem .3rem}
+.ri{padding:.6rem .7rem;border-radius:6px;cursor:pointer;transition:background .12s;border-left:3px solid transparent;margin-bottom:.2rem}
+.ri:hover{background:rgba(255,255,255,.06)}
+.ri.active{background:rgba(14,165,233,.18);border-left-color:var(--primary)}
+.ri-name{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ri-meta{font-size:.68rem;opacity:.4;margin-top:.1rem}
+.sb-foot{padding:.625rem;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:.4rem}
+.sb-btn{width:100%;padding:.5rem .75rem;border-radius:6px;font-size:.78rem;font-weight:600;border:1px solid}
+
+/* TOPBAR (mobile) */
+.topbar{display:none;background:#0f172a;color:#fff;padding:.75rem 1rem;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-title{font-weight:800;font-size:.95rem;display:flex;align-items:center;gap:.4rem}
+.hamburger{background:none;border:none;color:#fff;font-size:1.3rem;cursor:pointer;padding:.2rem}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:1.25rem;min-width:0}
+
+/* NUMBER GRID */
+.ngrid{display:grid;grid-template-columns:repeat(10,1fr);gap:.4rem}
+.num{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-family:var(--mono);font-size:.8rem;font-weight:500;cursor:pointer;transition:transform .12s,box-shadow .12s,opacity .12s;border:2px solid transparent;user-select:none}
+.num:hover:not(.dim){transform:scale(1.12);box-shadow:0 4px 10px rgba(0,0,0,.15)}
+.num:active:not(.dim){transform:scale(.93)}
+.num.available{background:var(--green-bg);color:var(--green);border-color:var(--green-b)}
+.num.paid{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-b)}
+.num.pending{background:var(--yellow-bg);color:var(--yellow);border-color:var(--yellow-b)}
+.num.reserved{background:var(--gray-bg);color:var(--gray);border-color:var(--gray-b)}
+.num.dim{opacity:.25;cursor:default;transform:none!important}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.55rem;margin:.875rem 0}
+.stat{border-radius:9px;padding:.75rem .875rem;border-left:4px solid}
+.s-lbl{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.75;margin-bottom:.2rem}
+.s-val{font-size:1.3rem;font-weight:800;font-family:var(--mono)}
+.s-val.sm{font-size:.95rem;font-family:var(--font)}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;z-index:500;padding:0;animation:fdIn .15s ease}
+.modal{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;animation:slUp .2s ease;padding-bottom:env(safe-area-inset-bottom)}
+.mhead{padding:1rem 1.25rem .875rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1}
+.mhead h3{font-size:.95rem;font-weight:700}
+.mbody{padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:.85rem}
+.mfoot{padding:.875rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:.5rem;justify-content:flex-end;flex-wrap:wrap;background:#fff;position:sticky;bottom:0}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:500px}
+th{padding:.5rem .75rem;text-align:left;font-weight:700;color:var(--muted);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;background:var(--bg2);border-bottom:1px solid var(--border)}
+td{padding:.65rem .75rem;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--bg2)}
+
+/* TOAST */
+.toasts{position:fixed;top:1rem;right:1rem;left:1rem;z-index:9999;display:flex;flex-direction:column;gap:.4rem;pointer-events:none;max-width:400px;margin:0 auto}
+.toast{padding:.65rem 1rem;border-radius:9px;font-size:.83rem;font-weight:600;box-shadow:0 8px 20px rgba(0,0,0,.15);animation:slUp .18s ease;color:#fff;display:flex;align-items:center;gap:.5rem}
+.toast.success{background:#15803d}
+.toast.error{background:var(--danger)}
+.toast.info{background:#1e40af}
+.toast.warn{background:#92400e}
+
+/* LEGEND */
+.legend{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.875rem}
+.leg{display:flex;align-items:center;gap:.3rem;padding:.25rem .65rem;border-radius:999px;font-size:.73rem;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .12s}
+.leg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* IMAGE UPLOAD */
+.img-upload{border:2px dashed var(--border2);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:border-color .15s;background:var(--bg2)}
+.img-upload:hover{border-color:var(--primary)}
+.img-preview{width:100%;max-height:180px;object-fit:contain;border-radius:8px;margin-top:.5rem}
+
+/* PROGRESS */
+.prog{background:var(--bg2);border-radius:999px;height:7px;overflow:hidden;margin:.4rem 0}
+.prog-bar{height:100%;background:var(--primary);border-radius:999px;transition:width .4s}
+
+/* PNG EXPORT CANVAS (hidden) */
+#export-canvas{display:none}
+
+/* TABS */
+.tabs{display:flex;gap:.35rem;margin-bottom:1rem;background:var(--bg2);padding:.3rem;border-radius:10px}
+.tab{flex:1;padding:.5rem;border-radius:7px;font-size:.8rem;font-weight:600;background:transparent;color:var(--muted);border:none;transition:all .15s;cursor:pointer}
+.tab.active{background:#fff;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+
+/* CLIENT VIEW */
+.client-wrap{min-height:100vh;background:var(--bg)}
+.client-header{background:linear-gradient(135deg,#0f172a,#0c4a6e);color:#fff;padding:1.25rem}
+.client-img{width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin-bottom:.875rem}
+
+/* OVERLAY for sidebar on mobile */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+
+@keyframes fdIn{from{opacity:0}to{opacity:1}}
+@keyframes slUp{from{transform:translateY(15px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{position:fixed;left:-230px;top:0;height:100vh;z-index:100;transition:left .2s}
+  .sidebar.open{left:0}
+  .sb-overlay.open{display:block}
+  .topbar{display:flex}
+  .app{flex-direction:column}
+  .main{padding:.875rem}
+  .ngrid{gap:.3rem}
+  .num{font-size:.72rem;border-radius:5px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .overlay{align-items:flex-end}
+  .modal{border-radius:18px 18px 0 0}
+}
+@media(max-width:380px){.num{font-size:.62rem}.ngrid{gap:.22rem}}
+</style>
+</head>
+<body>
+
+<!-- ====== LOGIN ====== -->
+<div id="v-login" style="display:none;min-height:100vh;background:linear-gradient(135deg,#0ea5e9,#0f172a);align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#fff;border-radius:18px;padding:2rem;width:100%;max-width:360px;box-shadow:0 25px 50px rgba(0,0,0,.25)">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div style="font-size:2.5rem">🎟️</div>
+      <h1 style="font-size:1.35rem;font-weight:800;margin-top:.3rem">RifasPro</h1>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem">Panel de control</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.8rem">
+      <div class="fg">
+        <label class="flabel">Contraseña</label>
+        <input class="fc" type="password" id="lp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <p id="l-err" style="color:var(--danger);font-size:.8rem;display:none">❌ Contraseña incorrecta</p>
+      <button class="btn btn-primary" onclick="doLogin()" style="width:100%;padding:.7rem;font-size:.95rem">Entrar</button>
+    </div>
+    <p style="margin-top:1rem;padding:.65rem;background:var(--bg2);border-radius:7px;font-size:.75rem;color:var(--muted);text-align:center">Contraseña por defecto: <strong>admin123</strong></p>
+  </div>
+</div>
+
+<!-- ====== ADMIN ====== -->
+<div id="v-admin" style="display:none" class="app">
+
+  <!-- Topbar mobile -->
+  <div class="topbar">
+    <div class="topbar-title">🎟️ RifasPro</div>
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  </div>
+  <div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <div style="font-size:1.3rem">🎟️</div>
+      <div><div class="sb-logo">RifasPro</div><div class="sb-sub">Panel Admin</div></div>
+    </div>
+    <div class="sb-body">
+      <button class="btn btn-primary" onclick="abrirNuevaRifa()" style="width:100%;margin-bottom:.625rem;font-size:.82rem">＋ Nueva rifa</button>
+      <div class="sb-label">Mis Rifas</div>
+      <div id="sb-list"></div>
+    </div>
+    <div class="sb-foot">
+      <button class="sb-btn" onclick="exportJSON()" style="background:var(--green-bg);color:var(--green);border-color:var(--green-b)">💾 Guardar backup .json</button>
+      <button class="sb-btn" onclick="document.getElementById('imp').click()" style="background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.15)">📂 Cargar backup</button>
+      <input type="file" id="imp" accept=".json" style="display:none" onchange="importJSON(event)"/>
+      <button class="sb-btn" onclick="doLogout()" style="background:rgba(255,255,255,.05);color:rgba(255,255,255,.45);border-color:rgba(255,255,255,.08)">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main" id="main">
+    <!-- Empty -->
+    <div id="m-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:.75rem;color:var(--muted);text-align:center">
+      <div style="font-size:3rem;opacity:.4">🎟️</div>
+      <h2 style="font-weight:700;color:var(--text)">Bienvenido a RifasPro</h2>
+      <p style="font-size:.875rem">Crea tu primera rifa con el botón <strong>+ Nueva rifa</strong></p>
+    </div>
+
+    <!-- Detail -->
+    <div id="m-detail" style="display:none">
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab active" id="tab-admin" onclick="setTab('admin')">⚙️ Admin</button>
+        <button class="tab" id="tab-client" onclick="setTab('client')">👁️ Vista cliente</button>
+      </div>
+
+      <!-- ADMIN TAB -->
+      <div id="panel-admin">
+        <!-- Header rifa -->
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.625rem;margin-bottom:1rem">
+          <div style="min-width:0;flex:1">
+            <h1 id="d-title" style="font-weight:800;font-size:1.25rem;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></h1>
+            <p id="d-meta" style="color:var(--muted);font-size:.8rem;margin-top:.15rem"></p>
+          </div>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;flex-shrink:0">
+            <button class="btn btn-sm btn-secondary" onclick="abrirEditarRifa()">✏️</button>
+            <button class="btn btn-sm btn-danger" onclick="eliminarRifa()">🗑️</button>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div id="d-stats" class="stats"></div>
+
+        <!-- Exports -->
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.875rem">
+          <button class="btn btn-sm btn-secondary" onclick="exportPNGCompleto()">🖼️ PNG completo</button>
+          <button class="btn btn-sm btn-secondary" onclick="exportPNGClientes()">🖼️ PNG para clientes</button>
+          <button class="btn btn-sm btn-secondary" onclick="exportPDF()">📄 PDF / Imprimir</button>
+          <button class="btn btn-sm btn-secondary" onclick="exportCSV()">📊 CSV</button>
+        </div>
+
+        <!-- Legend / Filter -->
+        <div class="legend" id="d-legend"></div>
+
+        <!-- Grid -->
+        <div class="card" style="padding:1rem;margin-bottom:1rem">
+          <p style="font-size:.72rem;color:var(--light);margin-bottom:.75rem">👆 Toca un número para registrar o editar</p>
+          <div class="ngrid" id="d-grid"></div>
+        </div>
+
+        <!-- Buyers table -->
+        <div class="card" style="overflow:hidden;margin-bottom:1rem">
+          <div style="padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <span style="font-weight:700;font-size:.9rem">📋 Compradores</span>
+            <span id="d-count" style="font-size:.75rem;color:var(--muted)"></span>
+          </div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>#</th><th>Estado</th><th>Nombre</th><th>Teléfono</th><th>F. límite</th><th>Notas</th><th></th></tr></thead>
+            <tbody id="d-tbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLIENT TAB -->
+      <div id="panel-client" style="display:none">
+        <div class="card" style="overflow:hidden">
+          <div style="padding:.875rem 1rem;background:linear-gradient(135deg,#0f172a,#0c4a6e);color:#fff">
+            <h2 id="cv-title" style="font-weight:800;font-size:1.2rem"></h2>
+            <p id="cv-meta" style="font-size:.8rem;opacity:.7;margin-top:.2rem"></p>
+          </div>
+          <div id="cv-img-wrap" style="display:none;padding:.875rem .875rem 0">
+            <img id="cv-img" src="" alt="Premio" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px"/>
+          </div>
+          <div style="padding:.875rem">
+            <div id="cv-desc" style="font-size:.85rem;color:var(--muted);margin-bottom:.875rem"></div>
+            <div id="cv-stats" class="stats"></div>
+            <div class="legend" id="cv-legend"></div>
+            <div class="ngrid" id="cv-grid" style="margin-bottom:.875rem"></div>
+            <p style="font-size:.75rem;color:var(--light);text-align:center">
+              🟢 Disponible &nbsp; 🔵 Pagado &nbsp; 🟡 Pendiente &nbsp; ⚪ Apartado
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ====== MODALS ====== -->
+
+<!-- Modal Rifa -->
+<div id="modal-rifa" class="overlay" style="display:none">
+  <div class="modal" style="max-width:500px">
+    <div class="mhead">
+      <h3 id="mr-tit">Nueva Rifa</h3>
+      <button class="btn btn-xs btn-secondary" onclick="cerrar('modal-rifa')">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="fg">
+        <label class="flabel">Título / Premio *</label>
+        <input class="fc" id="mr-nombre" placeholder="Ej: TV Samsung 65 pulgadas"/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem">
+        <div class="fg">
+          <label class="flabel">Precio *</label>
+          <input class="fc" type="number" id="mr-precio" placeholder="5.00" min="0" step="0.01"/>
+        </div>
+        <div class="fg">
+          <label class="flabel">Moneda</label>
+          <select class="fc" id="mr-moneda">
+            <option value="$">$ USD</option>
+            <option value="B/.">B/. PAB</option>
+            <option value="₡">₡ CRC</option>
+            <option value="Q">Q GTQ</option>
+            <option value="L">L HNL</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="flabel">Fecha del sorteo *</label>
+        <input class="fc" type="date" id="mr-fecha"/>
+      </div>
+      <div class="fg">
+        <label class="flabel">Descripción (opcional)</label>
+        <textarea class="fc" id="mr-desc" rows="2" placeholder="Detalles del premio..."></textarea>
+      </div>
+      <div class="fg">
+        <label class="flabel">Imagen del producto (opcional)</label>
+        <div class="img-upload" id="img-drop" onclick="document.getElementById('img-input').click()" ondragover="event.preventDefault()" ondrop="handleImgDrop(event)">
+          <div id="img-placeholder">
+            <div style="font-size:1.75rem;margin-bottom:.4rem">🖼️</div>
+            <p style="font-size:.82rem;color:var(--muted)">Toca para subir imagen</p>
+            <p style="font-size:.72rem;color:var(--light)">JPG, PNG — máx 2MB</p>
+          </div>
+          <img id="img-preview" class="img-preview" style="display:none"/>
+        </div>
+        <input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImgSelect(event)"/>
+        <button id="img-clear" class="btn btn-xs btn-danger" style="display:none;align-self:flex-start;margin-top:.3rem" onclick="clearImg()">✕ Quitar imagen</button>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-secondary" onclick="cerrar('modal-rifa')">Cancelar</button>
+      <button class="btn btn-primary" id="mr-btn" onclick="guardarRifa()">Crear rifa</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Número -->
+<div id="modal-num" class="overlay" style="display:none">
+  <div class="modal" style="max-width:460px">
+    <div class="mhead">
+      <h3>Número <span id="mn-k" style="font-family:var(--mono);color:var(--primary);font-size:1.1rem"></span></h3>
+      <button class="btn btn-xs btn-secondary" onclick="cerrar('modal-num')">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="fg">
+        <label class="flabel">Estado</label>
+        <select class="fc" id="mn-estado" onchange="toggleCampos()">
+          <option value="available">🟢 Disponible</option>
+          <option value="paid">🔵 Vendido y pagado</option>
+          <option value="pending">🟡 Vendido — pendiente de pago</option>
+          <option value="reserved">⚪ Apartado</option>
+        </select>
+      </div>
+      <div id="mn-campos" style="display:flex;flex-direction:column;gap:.85rem">
+        <div class="fg">
+          <label class="flabel">Nombre</label>
+          <input class="fc" id="mn-nombre" placeholder="Nombre completo"/>
+        </div>
+        <div class="fg">
+          <label class="flabel">Teléfono</label>
+          <input class="fc" id="mn-tel" type="tel" placeholder="+507 6000-0000"/>
+        </div>
+        <div class="fg" id="mn-fecha-wrap">
+          <label class="flabel">Fecha límite de pago</label>
+          <input class="fc" type="date" id="mn-fecha"/>
+        </div>
+        <div class="fg">
+          <label class="flabel">Notas</label>
+          <input class="fc" id="mn-notas" placeholder="Ej: paga el viernes"/>
+        </div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-danger btn-sm" id="mn-liberar" onclick="liberarNum()">🔓 Liberar</button>
+      <button class="btn btn-secondary" onclick="cerrar('modal-num')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarNum()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden canvas for PNG export -->
+<canvas id="export-canvas"></canvas>
+
+<!-- TOASTS -->
+<div class="toasts" id="toasts"></div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const PASS = 'admin123';
+let rifas = {};
+let rifaActual = null;
+let numActual = null;
+let editandoId = null;
+let filtro = 'all';
+let imgBase64 = null;
+let tabActual = 'admin';
+
+function uid(){ return 'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
+
+function numeros(){ 
+  const n={};
+  for(let i=0;i<100;i++){const k=String(i).padStart(2,'0');n[k]={status:'available',nombre:'',tel:'',fecha:'',notas:''};}
+  return n;
+}
+
+function save(){ try{localStorage.setItem('rp2_data',JSON.stringify(rifas));}catch(e){} }
+function load(){ try{const s=localStorage.getItem('rp2_data');if(s)rifas=JSON.parse(s);}catch(e){rifas={};} }
+
+// ============================================================
+// AUTH
+// ============================================================
+function doLogin(){
+  if(document.getElementById('lp').value===PASS){
+    sessionStorage.setItem('rp_ok','1');
+    show('admin');
+  } else {
+    document.getElementById('l-err').style.display='block';
+    document.getElementById('lp').value='';
+  }
+}
+function doLogout(){ sessionStorage.removeItem('rp_ok'); show('login'); }
+
+function show(v){
+  ['login','admin'].forEach(x=>{const el=document.getElementById('v-'+x);if(el)el.style.display='none';});
+  const t=document.getElementById('v-'+v);
+  if(t) t.style.display='flex';
+  if(v==='admin') renderAdmin();
+}
+
+// ============================================================
+// SIDEBAR / MOBILE
+// ============================================================
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sb-overlay').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('open');
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderAdmin(){
+  renderSB();
+  if(rifaActual&&rifas[rifaActual]) renderDetail(rifaActual);
+  else { document.getElementById('m-empty').style.display='flex'; document.getElementById('m-detail').style.display='none'; }
+}
+
+function renderSB(){
+  const lst=Object.values(rifas);
+  const c=document.getElementById('sb-list');
+  if(!lst.length){ c.innerHTML='<p style="font-size:.75rem;color:rgba(255,255,255,.25);padding:.5rem;text-align:center">Sin rifas</p>'; return; }
+  c.innerHTML=lst.map(r=>{
+    const sold=Object.values(r.numeros).filter(n=>n.status!=='available').length;
+    return `<div class="ri${rifaActual===r.id?' active':''}" onclick="selRifa('${r.id}')">
+      <div class="ri-name">${r.titulo}</div>
+      <div class="ri-meta">${sold}/100 · ${r.moneda||'$'}${r.precio} · 📅${r.fecha}</div>
+    </div>`;
+  }).join('');
+}
+
+function selRifa(id){ rifaActual=id; filtro='all'; tabActual='admin'; renderAdmin(); closeSidebar(); }
+
+function renderDetail(id){
+  const r=rifas[id];
+  if(!r) return;
+  document.getElementById('m-empty').style.display='none';
+  document.getElementById('m-detail').style.display='block';
+  document.getElementById('d-title').textContent=r.titulo;
+  document.getElementById('d-meta').textContent=`${r.moneda||'$'}${r.precio}/número · 📅 ${r.fecha}${r.desc?' · '+r.desc:''}`;
+  renderStats(r);
+  renderLegend();
+  renderGrid(r);
+  renderTabla(r);
+  renderClientView(r);
+  setTab(tabActual);
+}
+
+function renderStats(r){
+  const v=Object.values(r.numeros);
+  const av=v.filter(n=>n.status==='available').length;
+  const pa=v.filter(n=>n.status==='paid').length;
+  const pe=v.filter(n=>n.status==='pending').length;
+  const re=v.filter(n=>n.status==='reserved').length;
+  const m=r.moneda||'$';
+  document.getElementById('d-stats').innerHTML=
+    sc('Disponibles',av,'var(--green)','var(--green-bg)')+
+    sc('Pagados',pa,'var(--blue)','var(--blue-bg)')+
+    sc('Pendientes',pe,'var(--yellow)','var(--yellow-bg)')+
+    sc('Apartados',re,'var(--gray)','var(--gray-bg)')+
+    sc('Recaudado',m+(pa*r.precio).toLocaleString(),'var(--primary)','var(--pl)',true);
+}
+function sc(l,v,c,bg,sm=false){ return `<div class="stat" style="background:${bg};border-color:${c}"><div class="s-lbl" style="color:${c}">${l}</div><div class="s-val${sm?' sm':''}" style="color:${c}">${v}</div></div>`; }
+
+const LEGS=[
+  {s:'available',l:'Disponible',c:'var(--green)',bg:'var(--green-bg)'},
+  {s:'paid',l:'Pagado',c:'var(--blue)',bg:'var(--blue-bg)'},
+  {s:'pending',l:'Pendiente',c:'var(--yellow)',bg:'var(--yellow-bg)'},
+  {s:'reserved',l:'Apartado',c:'var(--gray)',bg:'var(--gray-bg)'},
+];
+
+function renderLegend(){
+  document.getElementById('d-legend').innerHTML=LEGS.map(l=>
+    `<div class="leg" style="background:${l.bg};color:${l.c};border-color:${filtro===l.s?l.c:'transparent'}" onclick="setFiltro('${l.s}')">
+      <span class="leg-dot" style="background:${l.c}"></span>${l.l}
+    </div>`
+  ).join('')+(filtro!=='all'?`<div class="leg" style="background:var(--bg2);color:var(--muted);border-color:var(--border2)" onclick="setFiltro('all')">✕ Todos</div>`:'');
+}
+function setFiltro(s){ filtro=filtro===s?'all':s; renderLegend(); renderGrid(rifas[rifaActual]); }
+
+function renderGrid(r){
+  let h='';
+  for(let i=0;i<100;i++){
+    const k=String(i).padStart(2,'0');
+    const d=r.numeros[k]||{status:'available'};
+    const dim=filtro!=='all'&&d.status!==filtro?' dim':'';
+    const tt=d.nombre?`${k}: ${d.nombre}${d.tel?' · '+d.tel:''}`:k;
+    h+=`<div class="num ${d.status}${dim}" onclick="${dim?'':''}" data-key="${k}" title="${tt}">${k}</div>`;
+  }
+  document.getElementById('d-grid').innerHTML=h;
+  document.querySelectorAll('#d-grid .num:not(.dim)').forEach(el=>{
+    el.addEventListener('click',()=>abrirNum(el.dataset.key));
+  });
+}
+
+function renderTabla(r){
+  const filas=Object.entries(r.numeros).filter(([,d])=>d.status!=='available').sort(([a],[b])=>a.localeCompare(b));
+  document.getElementById('d-count').textContent=filas.length+' registros';
+  if(!filas.length){ document.getElementById('d-tbody').innerHTML='<tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--muted)">Sin compradores aún</td></tr>'; return; }
+  const bm={paid:'b-pa',pending:'b-pe',reserved:'b-re'};
+  const lm={paid:'🔵 Pagado',pending:'🟡 Pendiente',reserved:'⚪ Apartado'};
+  document.getElementById('d-tbody').innerHTML=filas.map(([k,d])=>`
+    <tr>
+      <td style="font-family:var(--mono);font-weight:700">${k}</td>
+      <td><span class="badge ${bm[d.status]||''}">${lm[d.status]||d.status}</span></td>
+      <td style="font-weight:500">${d.nombre||'—'}</td>
+      <td>${d.tel||'—'}</td>
+      <td>${d.fecha||'—'}</td>
+      <td style="color:var(--muted);font-size:.78rem">${d.notas||'—'}</td>
+      <td><button class="btn btn-xs btn-secondary" onclick="abrirNum('${k}')">✏️</button></td>
+    </tr>`).join('');
+}
+
+// ============================================================
+// CLIENT VIEW
+// ============================================================
+function renderClientView(r){
+  document.getElementById('cv-title').textContent=r.titulo;
+  document.getElementById('cv-meta').textContent=`${r.moneda||'$'}${r.precio} por número · Sorteo: ${r.fecha}`;
+  
+  const imgWrap=document.getElementById('cv-img-wrap');
+  const cvImg=document.getElementById('cv-img');
+  if(r.imagen){ imgWrap.style.display='block'; cvImg.src=r.imagen; }
+  else imgWrap.style.display='none';
+
+  document.getElementById('cv-desc').textContent=r.desc||'';
+
+  const v=Object.values(r.numeros);
+  const av=v.filter(n=>n.status==='available').length;
+  const pa=v.filter(n=>n.status==='paid').length;
+  const m=r.moneda||'$';
+  document.getElementById('cv-stats').innerHTML=
+    sc('Disponibles',av,'var(--green)','var(--green-bg)')+
+    sc('Vendidos',100-av,'var(--blue)','var(--blue-bg)')+
+    sc('Precio',m+r.precio,'var(--primary)','var(--pl)',true);
+
+  document.getElementById('cv-legend').innerHTML=LEGS.map(l=>
+    `<div class="leg" style="background:${l.bg};color:${l.c};border-color:transparent;cursor:default">
+      <span class="leg-dot" style="background:${l.c}"></span>${l.l}
+    </div>`).join('');
+
+  let h='';
+  for(let i=0;i<100;i++){
+    const k=String(i).padStart(2,'0');
+    const d=r.numeros[k]||{status:'available'};
+    h+=`<div class="num ${d.status}" style="cursor:${d.status==='available'?'pointer':'not-allowed'};opacity:${d.status==='available'?1:.5}">${k}</div>`;
+  }
+  document.getElementById('cv-grid').innerHTML=h;
+}
+
+function setTab(t){
+  tabActual=t;
+  document.getElementById('tab-admin').className='tab'+(t==='admin'?' active':'');
+  document.getElementById('tab-client').className='tab'+(t==='client'?' active':'');
+  document.getElementById('panel-admin').style.display=t==='admin'?'block':'none';
+  document.getElementById('panel-client').style.display=t==='client'?'block':'none';
+}
+
+// ============================================================
+// MODAL RIFA
+// ============================================================
+function abrirNuevaRifa(){
+  editandoId=null; imgBase64=null;
+  document.getElementById('mr-tit').textContent='Nueva Rifa';
+  document.getElementById('mr-btn').textContent='Crear rifa';
+  ['mr-nombre','mr-precio','mr-fecha','mr-desc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mr-moneda').value='$';
+  resetImg();
+  document.getElementById('modal-rifa').style.display='flex';
+  setTimeout(()=>document.getElementById('mr-nombre').focus(),150);
+  closeSidebar();
+}
+
+function abrirEditarRifa(){
+  const r=rifas[rifaActual]; editandoId=rifaActual;
+  document.getElementById('mr-tit').textContent='Editar Rifa';
+  document.getElementById('mr-btn').textContent='Guardar cambios';
+  document.getElementById('mr-nombre').value=r.titulo;
+  document.getElementById('mr-precio').value=r.precio;
+  document.getElementById('mr-fecha').value=r.fecha;
+  document.getElementById('mr-desc').value=r.desc||'';
+  document.getElementById('mr-moneda').value=r.moneda||'$';
+  if(r.imagen){ showImgPreview(r.imagen); imgBase64=r.imagen; }
+  else resetImg();
+  document.getElementById('modal-rifa').style.display='flex';
+}
+
+function guardarRifa(){
+  const titulo=document.getElementById('mr-nombre').value.trim();
+  const precio=parseFloat(document.getElementById('mr-precio').value);
+  const fecha=document.getElementById('mr-fecha').value;
+  if(!titulo||!precio||!fecha){ toast('Completa título, precio y fecha','error'); return; }
+  if(editandoId){
+    const r=rifas[editandoId];
+    r.titulo=titulo; r.precio=precio; r.fecha=fecha;
+    r.desc=document.getElementById('mr-desc').value.trim();
+    r.moneda=document.getElementById('mr-moneda').value;
+    if(imgBase64) r.imagen=imgBase64;
+    toast('Rifa actualizada ✓','success');
+  } else {
+    const id=uid();
+    rifas[id]={id,titulo,precio,fecha,
+      desc:document.getElementById('mr-desc').value.trim(),
+      moneda:document.getElementById('mr-moneda').value,
+      imagen:imgBase64||null,
+      numeros:numeros(),
+      creadoEn:new Date().toISOString()};
+    rifaActual=id;
+    toast('¡Rifa creada! 🎉','success');
+  }
+  save(); cerrar('modal-rifa'); renderAdmin();
+}
+
+function eliminarRifa(){
+  if(!confirm(`¿Eliminar "${rifas[rifaActual].titulo}"?\nNo se puede deshacer.`)) return;
+  delete rifas[rifaActual]; rifaActual=null; save();
+  toast('Rifa eliminada','warn'); renderAdmin();
+}
+
+// ============================================================
+// IMAGE
+// ============================================================
+function handleImgSelect(e){ processImg(e.target.files[0]); }
+function handleImgDrop(e){ e.preventDefault(); processImg(e.dataTransfer.files[0]); }
+
+function processImg(file){
+  if(!file||!file.type.startsWith('image/')){ toast('Solo imágenes JPG o PNG','error'); return; }
+  if(file.size>2*1024*1024){ toast('Imagen demasiado grande (máx 2MB)','error'); return; }
+  const reader=new FileReader();
+  reader.onload=ev=>{ imgBase64=ev.target.result; showImgPreview(imgBase64); };
+  reader.readAsDataURL(file);
+}
+
+function showImgPreview(src){
+  document.getElementById('img-placeholder').style.display='none';
+  const p=document.getElementById('img-preview');
+  p.src=src; p.style.display='block';
+  document.getElementById('img-clear').style.display='inline-flex';
+}
+
+function clearImg(){
+  imgBase64=null; resetImg();
+  if(editandoId&&rifas[editandoId]) rifas[editandoId].imagen=null;
+}
+
+function resetImg(){
+  document.getElementById('img-placeholder').style.display='block';
+  document.getElementById('img-preview').style.display='none';
+  document.getElementById('img-preview').src='';
+  document.getElementById('img-clear').style.display='none';
+  document.getElementById('img-input').value='';
+  imgBase64=null;
+}
+
+// ============================================================
+// MODAL NÚMERO
+// ============================================================
+function abrirNum(k){
+  numActual=k;
+  const d=rifas[rifaActual].numeros[k]||{status:'available'};
+  document.getElementById('mn-k').textContent=k;
+  document.getElementById('mn-estado').value=d.status;
+  document.getElementById('mn-nombre').value=d.nombre||'';
+  document.getElementById('mn-tel').value=d.tel||'';
+  document.getElementById('mn-fecha').value=d.fecha||'';
+  document.getElementById('mn-notas').value=d.notas||'';
+  document.getElementById('mn-liberar').style.display=d.status!=='available'?'inline-flex':'none';
+  toggleCampos();
+  document.getElementById('modal-num').style.display='flex';
+  setTimeout(()=>document.getElementById('mn-nombre').focus(),150);
+}
+
+function toggleCampos(){
+  const s=document.getElementById('mn-estado').value;
+  document.getElementById('mn-campos').style.display=s==='available'?'none':'flex';
+  document.getElementById('mn-fecha-wrap').style.display=(s==='pending'||s==='reserved')?'flex':'none';
+}
+
+function guardarNum(){
+  const k=numActual; const s=document.getElementById('mn-estado').value;
+  rifas[rifaActual].numeros[k]={
+    status:s,
+    nombre:s!=='available'?document.getElementById('mn-nombre').value.trim():'',
+    tel:s!=='available'?document.getElementById('mn-tel').value.trim():'',
+    fecha:(s==='pending'||s==='reserved')?document.getElementById('mn-fecha').value:'',
+    notas:s!=='available'?document.getElementById('mn-notas').value.trim():'',
+  };
+  save(); cerrar('modal-num'); toast(`Número ${k} guardado ✓`,'success');
+  renderDetail(rifaActual);
+}
+
+function liberarNum(){
+  if(!confirm(`¿Liberar número ${numActual}?`)) return;
+  rifas[rifaActual].numeros[numActual]={status:'available',nombre:'',tel:'',fecha:'',notas:''};
+  save(); cerrar('modal-num'); toast(`${numActual} liberado`,'success');
+  renderDetail(rifaActual);
+}
+
+// ============================================================
+// PNG EXPORT
+// ============================================================
+function exportPNGCompleto(){ generarPNG(false); }
+function exportPNGClientes(){ generarPNG(true); }
+
+function generarPNG(soloCliente){
+  const r=rifas[rifaActual]; if(!r) return;
+  
+  const W=900, COLS=10;
+  const CELL=58, GAP=6;
+  const GRID_W=COLS*CELL+(COLS-1)*GAP;
+  const PAD=32;
+
+  // Calculate height
+  const imgH=r.imagen&&!soloCliente?200:r.imagen?180:0;
+  const statsH=soloCliente?80:120;
+  const headerH=soloCliente?90:100;
+  const gridH=10*CELL+9*GAP;
+  const tableH=soloCliente?0:Math.min(Object.values(r.numeros).filter(n=>n.status!=='available').length*38+50,400);
+  const H=PAD+headerH+(r.imagen?imgH+PAD:0)+statsH+PAD+gridH+PAD+(tableH>0?tableH+PAD:0)+PAD;
+
+  const canvas=document.getElementById('export-canvas');
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+
+  // Background
+  const bgGrad=ctx.createLinearGradient(0,0,0,H);
+  bgGrad.addColorStop(0,'#f0f4f8'); bgGrad.addColorStop(1,'#e8eef5');
+  ctx.fillStyle=bgGrad; ctx.fillRect(0,0,W,H);
+
+  // Header
+  const hGrad=ctx.createLinearGradient(0,0,W,0);
+  hGrad.addColorStop(0,'#0f172a'); hGrad.addColorStop(1,'#0c4a6e');
+  ctx.fillStyle=hGrad; ctx.fillRect(0,0,W,headerH);
+
+  ctx.fillStyle='#fff';
+  ctx.font='bold 28px DM Sans, Arial';
+  ctx.fillText(r.titulo, PAD, 40);
+
+  ctx.font='16px DM Sans, Arial';
+  ctx.fillStyle='rgba(255,255,255,0.7)';
+  const m=r.moneda||'$';
+  ctx.fillText(`${m}${r.precio} por número  ·  Sorteo: ${r.fecha}${r.desc?' · '+r.desc:''}`, PAD, 68);
+  if(!soloCliente){
+    ctx.font='13px DM Sans, Arial';
+    ctx.fillStyle='rgba(255,255,255,0.45)';
+    ctx.fillText('RifasPro · '+new Date().toLocaleDateString(), PAD, 90);
+  }
+
+  let y=headerH+PAD;
+
+  // Image
+  const drawRest=(startY)=>{
+    let cy=startY;
+
+    // Stats bar
+    const v=Object.values(r.numeros);
+    const av=v.filter(n=>n.status==='available').length;
+    const pa=v.filter(n=>n.status==='paid').length;
+    const pe=v.filter(n=>n.status==='pending').length;
+    const re=v.filter(n=>n.status==='reserved').length;
+    const stats=soloCliente?[
+      {l:'Disponibles',v:av,c:'#16a34a',bg:'#dcfce7'},
+      {l:'Vendidos',v:100-av,c:'#1d4ed8',bg:'#dbeafe'},
+      {l:'Precio',v:`${m}${r.precio}`,c:'#0ea5e9',bg:'#e0f2fe'},
+    ]:[
+      {l:'Disponibles',v:av,c:'#16a34a',bg:'#dcfce7'},
+      {l:'Pagados',v:pa,c:'#1d4ed8',bg:'#dbeafe'},
+      {l:'Pendientes',v:pe,c:'#b45309',bg:'#fef9c3'},
+      {l:'Apartados',v:re,c:'#475569',bg:'#f1f5f9'},
+      {l:'Recaudado',v:`${m}${(pa*r.precio).toLocaleString()}`,c:'#0ea5e9',bg:'#e0f2fe'},
+    ];
+    const sw=Math.floor((W-PAD*2-(stats.length-1)*10)/stats.length);
+    stats.forEach((s,i)=>{
+      const sx=PAD+i*(sw+10);
+      roundRect(ctx,sx,cy,sw,65,10);
+      ctx.fillStyle=s.bg; ctx.fill();
+      ctx.strokeStyle=s.c; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(sx,cy+10); ctx.lineTo(sx,cy+55); ctx.stroke();
+      ctx.fillStyle=s.c; ctx.font='bold 11px DM Sans, Arial';
+      ctx.fillText(s.l.toUpperCase(),sx+12,cy+18);
+      ctx.font='bold 22px DM Mono, monospace';
+      ctx.fillText(String(s.v),sx+12,cy+50);
+    });
+    cy+=65+PAD;
+
+    // Legend
+    const legData=[
+      {l:'Disponible',c:'#16a34a',bg:'#dcfce7'},
+      {l:'Pagado',c:'#1d4ed8',bg:'#dbeafe'},
+      {l:'Pendiente',c:'#b45309',bg:'#fef9c3'},
+      {l:'Apartado',c:'#475569',bg:'#f1f5f9'},
+    ];
+    let lx=PAD;
+    legData.forEach(l=>{
+      const tw=ctx.measureText(l.l).width+30;
+      roundRect(ctx,lx,cy,tw,26,13); ctx.fillStyle=l.bg; ctx.fill();
+      ctx.beginPath(); ctx.arc(lx+13,cy+13,5,0,Math.PI*2); ctx.fillStyle=l.c; ctx.fill();
+      ctx.fillStyle=l.c; ctx.font='bold 12px DM Sans, Arial';
+      ctx.fillText(l.l,lx+22,cy+17);
+      lx+=tw+8;
+    });
+    cy+=26+14;
+
+    // Grid
+    const colorMap={available:{bg:'#dcfce7',border:'#86efac',text:'#16a34a'},paid:{bg:'#dbeafe',border:'#93c5fd',text:'#1d4ed8'},pending:{bg:'#fef9c3',border:'#fde047',text:'#b45309'},reserved:{bg:'#f1f5f9',border:'#cbd5e1',text:'#475569'}};
+    const gridX=PAD+(W-PAD*2-GRID_W)/2;
+
+    for(let i=0;i<100;i++){
+      const k=String(i).padStart(2,'0');
+      const d=r.numeros[k]||{status:'available'};
+      const col=i%COLS, row=Math.floor(i/COLS);
+      const cx2=gridX+col*(CELL+GAP), cy2=cy+row*(CELL+GAP);
+      const C=colorMap[d.status]||colorMap.available;
+      roundRect(ctx,cx2,cy2,CELL,CELL,7);
+      ctx.fillStyle=C.bg; ctx.fill();
+      ctx.strokeStyle=C.border; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle=C.text;
+      ctx.font='bold 15px DM Mono, monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(k,cx2+CELL/2,cy2+CELL/2);
+      ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    }
+    cy+=10*(CELL+GAP)-GAP+PAD;
+
+    // Table (admin only)
+    if(!soloCliente){
+      const rows=Object.entries(r.numeros).filter(([,d])=>d.status!=='available').sort(([a],[b])=>a.localeCompare(b));
+      if(rows.length){
+        ctx.fillStyle='#fff';
+        roundRect(ctx,PAD,cy,W-PAD*2,rows.length*36+48,12); ctx.fill();
+        ctx.strokeStyle=var_border; ctx.lineWidth=1; ctx.stroke();
+
+        ctx.fillStyle='#f1f5f9';
+        roundRect(ctx,PAD,cy,W-PAD*2,36,{tl:12,tr:12,bl:0,br:0}); ctx.fill();
+
+        const cols2=['#','Estado','Nombre','Teléfono','Fecha límite','Notas'];
+        const colW=[60,110,180,140,120,W-PAD*2-610-10];
+        let hx=PAD+10;
+        ctx.fillStyle='#64748b'; ctx.font='bold 11px DM Sans, Arial';
+        cols2.forEach((c,i)=>{ ctx.fillText(c,hx,cy+22); hx+=colW[i]; });
+
+        const stColors={paid:'#1d4ed8',pending:'#b45309',reserved:'#475569'};
+        const stLabels={paid:'Pagado',pending:'Pendiente',reserved:'Apartado'};
+        rows.forEach(([k,d],ri)=>{
+          const ry=cy+36+ri*36;
+          if(ri%2===0){ ctx.fillStyle='rgba(14,165,233,.04)'; ctx.fillRect(PAD,ry,W-PAD*2,36); }
+          ctx.strokeStyle='#e2e8f0'; ctx.lineWidth=1;
+          ctx.beginPath(); ctx.moveTo(PAD,ry); ctx.lineTo(W-PAD,ry); ctx.stroke();
+          let rx=PAD+10;
+          ctx.fillStyle=stColors[d.status]||'#475569'; ctx.font='bold 13px DM Mono, monospace';
+          ctx.fillText(k,rx,ry+22); rx+=colW[0];
+          ctx.font='12px DM Sans, Arial'; ctx.fillText(stLabels[d.status]||d.status,rx,ry+22); rx+=colW[1];
+          ctx.fillStyle='#0f172a'; ctx.font='13px DM Sans, Arial'; ctx.fillText(d.nombre||'—',rx,ry+22); rx+=colW[2];
+          ctx.fillStyle='#64748b'; ctx.font='12px DM Sans, Arial'; ctx.fillText(d.tel||'—',rx,ry+22); rx+=colW[3];
+          ctx.fillText(d.fecha||'—',rx,ry+22); rx+=colW[4];
+          ctx.fillStyle='#94a3b8'; ctx.font='11px DM Sans, Arial'; ctx.fillText((d.notas||'—').slice(0,20),rx,ry+22);
+        });
+        cy+=rows.length*36+48+PAD;
+      }
+    }
+
+    // Footer
+    ctx.fillStyle='rgba(0,0,0,.2)';
+    ctx.font='11px DM Sans, Arial';
+    ctx.textAlign='center';
+    ctx.fillText('Generado por RifasPro · '+new Date().toLocaleString(), W/2, H-10);
+    ctx.textAlign='left';
+
+    // Download
+    const link=document.createElement('a');
+    link.download=r.titulo+(soloCliente?'-clientes':'-completo')+'.png';
+    link.href=canvas.toDataURL('image/png',0.95);
+    link.click();
+    toast('🖼️ PNG descargado','success');
+  };
+
+  if(r.imagen && soloCliente){
+    const img=new Image();
+    img.onload=()=>{
+      const iw=W-PAD*2, ih=Math.min(img.naturalHeight*(iw/img.naturalWidth),190);
+      roundRect(ctx,PAD,y,iw,ih,12); ctx.save(); ctx.clip();
+      ctx.drawImage(img,PAD,y,iw,ih); ctx.restore();
+      y+=ih+PAD; drawRest(y);
+    };
+    img.src=r.imagen;
+  } else {
+    drawRest(y);
+  }
+}
+
+const var_border='#e2e8f0';
+
+function roundRect(ctx,x,y,w,h,r){
+  if(typeof r==='number') r={tl:r,tr:r,bl:r,br:r};
+  ctx.beginPath();
+  ctx.moveTo(x+r.tl,y);
+  ctx.lineTo(x+w-r.tr,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r.tr);
+  ctx.lineTo(x+w,y+h-r.br); ctx.quadraticCurveTo(x+w,y+h,x+w-r.br,y+h);
+  ctx.lineTo(x+r.bl,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r.bl);
+  ctx.lineTo(x,y+r.tl); ctx.quadraticCurveTo(x,y,x+r.tl,y);
+  ctx.closePath();
+}
+
+// ============================================================
+// PDF / CSV
+// ============================================================
+function exportPDF(){
+  const r=rifas[rifaActual]; if(!r) return;
+  const v=Object.values(r.numeros);
+  const paid=v.filter(n=>n.status==='paid').length;
+  const m=r.moneda||'$';
+  const rows=Object.entries(r.numeros).sort(([a],[b])=>a.localeCompare(b));
+  const cMap={available:'#dcfce7',paid:'#dbeafe',pending:'#fef9c3',reserved:'#f1f5f9'};
+  const lMap={available:'Disponible',paid:'Pagado',pending:'Pendiente',reserved:'Apartado'};
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>${r.titulo}</title>
+  <style>*{box-sizing:border-box}body{font-family:Arial,sans-serif;padding:20px;color:#0f172a}
+  h1{margin:0 0 4px;font-size:20px}p{margin:0 0 14px;color:#555;font-size:13px}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{background:#0ea5e9;color:#fff;padding:7px;text-align:left}
+  td{padding:6px 7px;border-bottom:1px solid #e2e8f0}
+  .grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:14px 0}
+  .cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:5px;font-size:11px;font-weight:700;border:1.5px solid #ccc}
+  @media print{@page{margin:15mm}}</style></head><body>
+  <h1>${r.titulo}</h1>
+  <p>${r.desc||''}<br>Precio: ${m}${r.precio} · Sorteo: ${r.fecha} · Recaudado: ${m}${(paid*r.precio).toLocaleString()}</p>
+  <div class="grid">${rows.map(([k,d])=>`<div class="cell" style="background:${cMap[d.status]};border-color:${cMap[d.status].replace('bg','b')}">${k}</div>`).join('')}</div>
+  <table><thead><tr><th>#</th><th>Estado</th><th>Nombre</th><th>Teléfono</th><th>F. límite</th><th>Notas</th></tr></thead>
+  <tbody>${rows.filter(([,d])=>d.status!=='available').map(([k,d],i)=>`<tr style="background:${i%2===0?cMap[d.status]:'#fff'}"><td><b>${k}</b></td><td>${lMap[d.status]}</td><td>${d.nombre||'—'}</td><td>${d.tel||'—'}</td><td>${d.fecha||'—'}</td><td>${d.notas||'—'}</td></tr>`).join('')}</tbody></table>
+  <p style="margin-top:14px;color:#94a3b8;font-size:10px">RifasPro · ${new Date().toLocaleString()}</p>
+  <script>window.onload=()=>{window.print();}<\/script></body></html>`;
+  
+  const w=window.open('','_blank'); w.document.write(html); w.document.close();
+}
+
+function exportCSV(){
+  const r=rifas[rifaActual]; if(!r) return;
+  const rows=[['Número','Estado','Nombre','Teléfono','Fecha Límite','Notas']];
+  Object.entries(r.numeros).forEach(([k,d])=>rows.push([k,d.status,d.nombre||'',d.tel||'',d.fecha||'',d.notas||'']));
+  const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=r.titulo+'.csv'; a.click(); toast('📊 CSV exportado','success');
+}
+
+// ============================================================
+// BACKUP
+// ============================================================
+function exportJSON(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(rifas,null,2)],{type:'application/json'}));
+  a.download='rifaspro-backup-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+  toast('💾 Backup guardado','success');
+}
+
+function importJSON(e){
+  const file=e.target.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{ rifas=JSON.parse(ev.target.result); save(); rifaActual=Object.keys(rifas)[0]||null; toast('✅ Backup cargado','success'); renderAdmin(); }
+    catch{ toast('❌ Archivo inválido','error'); }
+  };
+  r.readAsText(file); e.target.value='';
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function cerrar(id){ document.getElementById(id).style.display='none'; }
+
+function toast(msg,tipo='info'){
+  const w=document.getElementById('toasts');
+  const t=document.createElement('div'); t.className='toast '+tipo; t.textContent=msg;
+  w.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); },3000);
+}
+
+['modal-rifa','modal-num'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('click',function(e){ if(e.target===this) cerrar(id); });
+});
+
+// ============================================================
+// INIT
+// ============================================================
+load();
+if(sessionStorage.getItem('rp_ok')==='1'){ show('admin'); } else { show('login'); }
+</script>
+</body>
+</html>
